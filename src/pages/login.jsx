@@ -13,7 +13,7 @@ export default function Login() {
             </div>
 
             {/* Login Form Container */}
-            <div className="flex flex-col gap-4 mx-auto py-20">
+            <div className="flex flex-col gap-4 mx-auto py-16">
                 {/* Heading */}
                 <div>
                     <h1 className="text-white text-xl font-bold">Login</h1>
