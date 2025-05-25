@@ -146,7 +146,7 @@ export default function Login() {
                         </motion.div>}
                     </div>
 
-                    <div>
+                    <div className="mb-16">
                         <p className="text-xs text-white text-center">Don't have an account? <button onClick={handleSignup} className="font-medium text-red-600">Create an Account</button></p>
                     </div>
                 </div>
