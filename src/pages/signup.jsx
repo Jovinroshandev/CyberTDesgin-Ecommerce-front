@@ -203,6 +203,7 @@ export default function Signup() {
                         <span className="mx-4 text-orange-300">OR</span>
                         <div className="flex-grow bg-orange-300 h-px" />
                     </div>
+                    
                     {/* Google Signin Button */}
                     <div className="flex flex-col items-center">
                         <div className="flex justify-center">
@@ -227,7 +228,7 @@ export default function Signup() {
                         </motion.div>}
                     </div>
                     <div>
-                        <p className="text-xs text-white text-center mt-6">Already have an account? <button onClick={handleLogin} className="font-medium text-red-600">Login</button></p>
+                        <p className="text-xs text-white text-center">Already have an account? <button onClick={handleLogin} className="font-medium text-red-600">Login</button></p>
                     </div>
                 </div>
             </motion.div>
