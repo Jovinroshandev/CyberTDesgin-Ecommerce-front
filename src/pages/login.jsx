@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion";
-import { useState } from "react";
 import LoginLayout from "../components/loginlayout";
 import axios from "axios";
 import { signInWithPopup,signInWithRedirect } from "firebase/auth"
 import { auth, provider } from "../firebase"
 
+import { useState, useEffect } from "react"; // ✅ add useEffect
+import { getRedirectResult } from "firebase/auth"; // ✅ add this
 
 
 export default function Login() {
@@ -17,6 +18,31 @@ export default function Login() {
     const [passAlert, setPasssAlert] = useState(false)
     const [googleAlert, setGoogleAlert] = useState(false)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
+
+    useEffect(() => {
+    getRedirectResult(auth)
+        .then(async (result) => {
+            if (result && result.user) {
+                const email = result.user.email;
+                try {
+                    const response = await axios.post(`${backendAPI}/google-login`, { email });
+                    const data = response.data;
+                    if (!data.success) {
+                        setGoogleAlert(true);
+                    } else {
+                        setGoogleAlert(false);
+                        navigate("/home");
+                    }
+                } catch (error) {
+                    console.error("Google redirect login failed:", error);
+                    alert("Google login failed. Please try again.");
+                }
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving Google redirect result:", error);
+        });
+}, []);
 
     const handleLogin = () => {
         axios.post(`${backendAPI}/login`, { email, password })
@@ -69,18 +95,7 @@ export default function Login() {
     const handleGoogleLoginMobile = async () => {
         setGoogleAlert(false)
         try {
-            const result = await signInWithRedirect(auth, provider)
-            const user = result.user;
-            const email = user.email;
-            const response = await axios.post(`${backendAPI}/google-login`, { email })
-            const data = response.data
-            if (!data.success) {
-                setGoogleAlert(true)
-            }
-            else {
-                setGoogleAlert(false)
-                navigate("/home")
-            }
+            await signInWithRedirect(auth, provider)
         }
         catch (error) {
             console.error("Google Login Failed:", error);
