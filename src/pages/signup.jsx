@@ -199,9 +199,9 @@ export default function Signup() {
                     </div>
 
                     <div className="flex items-center">
-                        <div className="flex-grow bg-orange-300 h-px" />
-                        <span className="mx-4 text-orange-300">OR</span>
-                        <div className="flex-grow bg-orange-300 h-px" />
+                        <div className="flex-grow bg-pink-400 h-px" />
+                        <span className="mx-4 text-pink-400">OR</span>
+                        <div className="flex-grow bg-pink-400 h-px" />
                     </div>
                     
                     {/* Google Signin Button */}
@@ -209,7 +209,7 @@ export default function Signup() {
                         <div className="flex justify-center">
                             <button
                                 onClick={handleGoodleLogin}
-                                className="text-pink-800 font-medium bg-white w-fit px-4 py-2 rounded-full">
+                                className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
                                 <i className="fa-brands fa-google" /> Signup with Google
                             </button>
                         </div>

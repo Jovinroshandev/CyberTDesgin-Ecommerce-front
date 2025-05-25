@@ -3,13 +3,12 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import LoginLayout from "../components/loginlayout";
 import axios from "axios";
-import { signInWithPopup } from "firebase/auth"
+import { signInWithPopup,signInWithRedirect } from "firebase/auth"
 import { auth, provider } from "../firebase"
 
 
 
 export default function Login() {
-
     const navigate = useNavigate();
     const handleSignup = () => navigate("/signup") //switch to signup page
     const [email, setEmail] = useState("") //hold email value
@@ -18,6 +17,7 @@ export default function Login() {
     const [passAlert, setPasssAlert] = useState(false)
     const [googleAlert, setGoogleAlert] = useState(false)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
+    
     const handleLogin = () => {
         axios.post(`${backendAPI}/login`, { email, password })
             .then((response) => {
@@ -38,7 +38,35 @@ export default function Login() {
             });
     }
 
-    const handleGoodleLogin = async () => {
+    const handleGoogleLogin = async () => {
+        setGoogleAlert(false)
+        try {
+            const result = await signInWithPopup(auth, provider)
+            const user = result.user;
+            const email = user.email;
+            const response = await axios.post(`${backendAPI}/google-login`, { email })
+            const data = response.data
+            if (!data.success) {
+                setGoogleAlert(true)
+            }
+            else {
+                setGoogleAlert(false)
+                navigate("/home")
+            }
+        }
+        catch (error) {
+            console.error("Google Login Failed:", error);
+            alert("Google login failed. Please try again.");
+        }
+    }
+    // Note:
+    // I am using two google login or signin button
+    // because signInWithPopup is not working in mobile
+    // but its working fine in laptop and signInWithPopup looks good in laptop
+    // so that i am using both buttons...
+    // handleGoogleLogin - only show in laptop
+    // handleGoogleLoginMobile - only show in mobile
+    const handleGoogleLoginMobile = async () => {
         setGoogleAlert(false)
         try {
             const result = await signInWithPopup(auth, provider)
@@ -118,16 +146,39 @@ export default function Login() {
                     </div>
 
                     <div className="flex items-center">
-                        <div className="flex-grow bg-orange-300 h-px" />
-                        <span className="mx-4 text-orange-300">OR</span>
-                        <div className="flex-grow bg-orange-300 h-px" />
+                        <div className="flex-grow bg-pink-400 h-px" />
+                        <span className="mx-4 text-pink-400">OR</span>
+                        <div className="flex-grow bg-pink-400 h-px" />
                     </div>
-                    {/* Google Signin Button */}
-                    <div className="flex flex-col items-center">
+                    {/* Google Signin Laptop Button */}
+                    <div className="hidden md:flex flex-col items-center">
                         <div className="flex justify-center">
                             <button
-                                onClick={handleGoodleLogin}
-                                className="text-orange-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
+                                onClick={handleGoogleLogin}
+                                className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
+                                <i className="fa-brands fa-google" /> Login with Google
+                            </button>
+                        </div>
+                        {googleAlert && <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 5,
+                                duration: 0.3
+
+                            }}
+                            className="text-red-500 text-xs py-2 rounded-lg">
+                            <p>Email id already exists. Please Login</p>
+                        </motion.div>}
+                    </div>
+                    {/* Google Signin Mogile Button */}
+                    <div className="md:hidden flex flex-col items-center">
+                        <div className="flex justify-center">
+                            <button
+                                onClick={handleGoogleLoginMobile}
+                                className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
                                 <i className="fa-brands fa-google" /> Login with Google
                             </button>
                         </div>
