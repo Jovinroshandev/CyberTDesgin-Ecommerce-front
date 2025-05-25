@@ -26,5 +26,5 @@
 .inputStyle:not(:placeholder-shown) + .labelStyle {
   transform: translateY(-18px);
   font-size: 12px;
-  color: rgb(255, 255, 255);
+  color:"#9D174D";
 }

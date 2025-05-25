@@ -121,7 +121,7 @@ export default function Signup() {
 
                 {/* Heading */}
                 <div>
-                    <h1 className="text-red-500 text-xl font-bold">Create Your Account</h1>
+                    <h1 className="text-yellow-500 text-xl font-bold">Create Your Account</h1>
                     <p className="text-gray-100 font-medium text-xs">Welcome! Sign up to start shopping</p>
                 </div>
 
@@ -169,7 +169,7 @@ export default function Signup() {
                     </div>
                     {/* SignUp Button*/}
                     <div className="flex justify-between">
-                        <div className="bg-red-600 w-fit text-white font-medium px-5 py-2 rounded-lg">
+                        <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
                             <button onClick={handleSubmit}>Signup</button>
                         </div>
                         {/* notification */}
@@ -209,7 +209,7 @@ export default function Signup() {
                         <div className="flex justify-center">
                             <button
                                 onClick={handleGoodleLogin}
-                                className="text-orange-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
+                                className="text-pink-800 font-medium bg-white w-fit px-4 py-2 rounded-full">
                                 <i className="fa-brands fa-google" /> Signup with Google
                             </button>
                         </div>
@@ -228,7 +228,7 @@ export default function Signup() {
                         </motion.div>}
                     </div>
                     <div>
-                        <p className="text-xs text-white text-center">Already have an account? <button onClick={handleLogin} className="font-medium text-red-600">Login</button></p>
+                        <p className="text-sm text-white text-center">Already have an account? <button onClick={handleLogin} className="font-medium text-[#ffbb73]">Login</button></p>
                     </div>
                 </div>
             </motion.div>

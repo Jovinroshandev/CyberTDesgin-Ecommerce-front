@@ -72,8 +72,8 @@ export default function Login() {
                 className="flex flex-col gap-8 mx-auto py-4">
                 {/* Heading */}
                 <div>
-                    <h1 className="text-red-500 text-xl font-bold">Login</h1>
-                    <p className="text-gray-100 font-medium text-xs">Please Login to continue shopping</p>
+                    <h1 className="text-yellow-500 text-xl md:text-3xl font-bold">Login</h1>
+                    <p className="text-gray-100 font-medium text-xs md:text-sm">Please Login to continue shopping</p>
                 </div>
 
                 <div className="flex flex-col gap-8 mx-auto w-72">
@@ -84,7 +84,7 @@ export default function Login() {
                                 setEmail(e.target.value)
                                 setEmailAlert(false); //reset alert msg
                             }}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300"
                             type="email"
                             id="email"
                             required
@@ -103,7 +103,7 @@ export default function Login() {
                                 setPassword(e.target.value)
                                 setPasssAlert(false) //reset alert msg
                             }}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300"
                             type="password"
                             id="password"
                             required
@@ -113,8 +113,8 @@ export default function Login() {
                         {/* Password Alert Message */}
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
-                    <div className="bg-red-600 w-fit text-white font-medium px-5 py-2 rounded-lg">
-                        <button onClick={handleLogin}>Submit</button>
+                    <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
+                        <button onClick={handleLogin}>Login</button>
                     </div>
 
                     <div className="flex items-center">
@@ -146,8 +146,8 @@ export default function Login() {
                         </motion.div>}
                     </div>
 
-                    <div className="mb-16">
-                        <p className="text-xs text-white text-center">Don't have an account? <button onClick={handleSignup} className="font-medium text-red-600">Create an Account</button></p>
+                    <div className="mb-16 md:mb-0">
+                        <p className="text-sm text-white text-center">Don't have an account? <button onClick={handleSignup} className="font-medium text-[#ffbb73]">Create an Account</button></p>
                     </div>
                 </div>
             </motion.div>
