@@ -17,7 +17,7 @@ export default function Login() {
     const [passAlert, setPasssAlert] = useState(false)
     const [googleAlert, setGoogleAlert] = useState(false)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
-    
+
     const handleLogin = () => {
         axios.post(`${backendAPI}/login`, { email, password })
             .then((response) => {
@@ -69,7 +69,7 @@ export default function Login() {
     const handleGoogleLoginMobile = async () => {
         setGoogleAlert(false)
         try {
-            const result = await signInWithPopup(auth, provider)
+            const result = await signInWithRedirect(auth, provider)
             const user = result.user;
             const email = user.email;
             const response = await axios.post(`${backendAPI}/google-login`, { email })
