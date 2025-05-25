@@ -5,6 +5,7 @@ import Checkout from "./pages/checkout"
 import Cards from "./pages/cards-page"
 import Login from "./pages/login"
 import Signup from "./pages/signup"
+import SetPassword from "./pages/setpassword"
 
 export default function App(){
   return(
@@ -12,6 +13,7 @@ export default function App(){
       <Routes>
         <Route path="/" element={<Login/>}/>
         <Route path="/signup" element={<Signup/>}/>
+        <Route path="/set-password" element={<SetPassword/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/products" element={<Products/>}/>
         <Route path="/checkout" element={<Checkout/>}/>
