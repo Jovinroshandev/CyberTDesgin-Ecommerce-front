@@ -129,7 +129,7 @@ export default function Signup() {
                     {/* Email Input with Floating Label */}
                     <div className="inputContainer">
                         <input onChange={handleEmail}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300 p-2 "
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2 "
                             type="email"
                             id="email"
                             required
@@ -144,7 +144,7 @@ export default function Signup() {
                     {/* Password Input with Floating Label */}
                     <div className="inputContainer">
                         <input onChange={handlePass}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300 p-2"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
                             type="password"
                             id="password"
                             required
@@ -157,7 +157,7 @@ export default function Signup() {
                     {/* Confirm Password */}
                     <div className="inputContainer">
                         <input onChange={handleConfirmPass}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300 p-2"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
                             type="password"
                             id="confirm-password"
                             value={confirmPassword}

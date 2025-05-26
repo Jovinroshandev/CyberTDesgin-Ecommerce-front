@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion";
+import { useState } from "react";
 import LoginLayout from "../components/loginlayout";
 import axios from "axios";
-import { signInWithPopup,signInWithRedirect } from "firebase/auth"
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, provider } from "../firebase"
 
-import { useState, useEffect } from "react"; // ✅ add useEffect
-import { getRedirectResult } from "firebase/auth"; // ✅ add this
 
 
 export default function Login() {
+
     const navigate = useNavigate();
+    
     const handleSignup = () => navigate("/signup") //switch to signup page
     const [email, setEmail] = useState("") //hold email value
     const [password, setPassword] = useState("") //hold password value
@@ -18,32 +19,6 @@ export default function Login() {
     const [passAlert, setPasssAlert] = useState(false)
     const [googleAlert, setGoogleAlert] = useState(false)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
-
-    useEffect(() => {
-    getRedirectResult(auth)
-        .then(async (result) => {
-            if (result && result.user) {
-                const email = result.user.email;
-                try {
-                    const response = await axios.post(`${backendAPI}/google-login`, { email });
-                    const data = response.data;
-                    if (!data.success) {
-                        setGoogleAlert(true);
-                    } else {
-                        setGoogleAlert(false);
-                        navigate("/home");
-                    }
-                } catch (error) {
-                    console.error("Google redirect login failed:", error);
-                    alert("Google login failed. Please try again.");
-                }
-            }
-        })
-        .catch((error) => {
-            console.error("Error retrieving Google redirect result:", error);
-        });
-}, []);
-
     const handleLogin = () => {
         axios.post(`${backendAPI}/login`, { email, password })
             .then((response) => {
@@ -64,7 +39,47 @@ export default function Login() {
             });
     }
 
-    const handleGoogleLogin = async () => {
+
+const handleGoogleLogin = async () => {
+    setGoogleAlert(false);
+    try {
+        if (isMobile) {
+            await signInWithRedirect(auth, provider);
+        } else {
+            const result = await signInWithPopup(auth, provider);
+            await processGoogleUser(result.user);
+        }
+    } catch (error) {
+        console.error("Google Login Failed:", error);
+        alert("Google login failed. Please try again.");
+    }
+};
+
+const processGoogleUser = async (user) => {
+    const email = user.email;
+    try {
+        const response = await axios.post(`${backendAPI}/google-login`, { email });
+        const data = response.data;
+        if (!data.success) {
+            setGoogleAlert(true);
+        } else {
+            setGoogleAlert(false);
+            navigate("/home");
+        }
+    } catch (error) {
+        console.error("Server error:", error);
+        alert("Something went wrong with login. Try again.");
+    }
+};
+
+    // Note:
+    // I am using two google login or signin button
+    // because signInWithPopup is not working in mobile
+    // but its working fine in laptop and signInWithPopup looks good in laptop
+    // so that i am using both buttons...
+    // handleGoogleLogin - only show in laptop
+    // handleGoogleLoginMobile - only show in mobile
+    const handleGoogleLoginMobile = async () => {
         setGoogleAlert(false)
         try {
             const result = await signInWithPopup(auth, provider)
@@ -79,23 +94,6 @@ export default function Login() {
                 setGoogleAlert(false)
                 navigate("/home")
             }
-        }
-        catch (error) {
-            console.error("Google Login Failed:", error);
-            alert("Google login failed. Please try again.");
-        }
-    }
-    // Note:
-    // I am using two google login or signin button
-    // because signInWithPopup is not working in mobile
-    // but its working fine in laptop and signInWithPopup looks good in laptop
-    // so that i am using both buttons...
-    // handleGoogleLogin - only show in laptop
-    // handleGoogleLoginMobile - only show in mobile
-    const handleGoogleLoginMobile = async () => {
-        setGoogleAlert(false)
-        try {
-            await signInWithRedirect(auth, provider)
         }
         catch (error) {
             console.error("Google Login Failed:", error);
