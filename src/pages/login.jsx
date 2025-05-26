@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import LoginLayout from "../components/loginlayout";
 import axios from "axios";
-import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth"
 import { auth, provider } from "../firebase"
 
 
@@ -11,7 +11,6 @@ import { auth, provider } from "../firebase"
 export default function Login() {
 
     const navigate = useNavigate();
-    
     const handleSignup = () => navigate("/signup") //switch to signup page
     const [email, setEmail] = useState("") //hold email value
     const [password, setPassword] = useState("") //hold password value
@@ -41,7 +40,6 @@ export default function Login() {
 
     const handleGoogleLogin = async () => {
         setGoogleAlert(false)
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         try {
             const result = await signInWithPopup(auth, provider)
             const user = result.user;
@@ -61,7 +59,6 @@ export default function Login() {
             alert("Google login failed. Please try again.");
         }
     }
-    
     return (
         <LoginLayout>
             {/* Login Form Container */}
@@ -125,12 +122,12 @@ export default function Login() {
                         <span className="mx-4 text-pink-400">OR</span>
                         <div className="flex-grow bg-pink-400 h-px" />
                     </div>
-                    {/* Google Signin  Button */}
+                    {/* Google Signin Button */}
                     <div className="flex flex-col items-center">
                         <div className="flex justify-center">
                             <button
                                 onClick={handleGoogleLogin}
-                                className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
+                                className="text-pink-400 font-medium bg-white w-fit px-4 py-2 rounded-full">
                                 <i className="fa-brands fa-google" /> Login with Google
                             </button>
                         </div>
@@ -145,10 +142,9 @@ export default function Login() {
 
                             }}
                             className="text-red-500 text-xs py-2 rounded-lg">
-                            <p>Email id already exists. Please Login</p>
+                            <p>Email not exists. Please create account</p>
                         </motion.div>}
                     </div>
-                    
 
                     <div className="mb-16 md:mb-0">
                         <p className="text-sm text-white text-center">Don't have an account? <button onClick={handleSignup} className="font-medium text-[#ffbb73]">Create an Account</button></p>
