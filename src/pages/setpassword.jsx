@@ -99,7 +99,7 @@ export default function SetPassword() {
                         {confirmAlert && <p className="text-xs text-red-500">Password and Confirm Password not match</p>}
                     </div>
                     {/* SignUp Button*/}
-                    <div className="flex justify-between mb-64">
+                    <div className="flex justify-between mb-60">
                         <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
                             <button onClick={handleSubmit}>Login</button>
                         </div>
