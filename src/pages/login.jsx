@@ -39,48 +39,9 @@ export default function Login() {
             });
     }
 
-
-const handleGoogleLogin = async () => {
-    setGoogleAlert(false);
-    try {
-        if (isMobile) {
-            await signInWithRedirect(auth, provider);
-        } else {
-            const result = await signInWithPopup(auth, provider);
-            await processGoogleUser(result.user);
-        }
-    } catch (error) {
-        console.error("Google Login Failed:", error);
-        alert("Google login failed. Please try again.");
-    }
-};
-
-const processGoogleUser = async (user) => {
-    const email = user.email;
-    try {
-        const response = await axios.post(`${backendAPI}/google-login`, { email });
-        const data = response.data;
-        if (!data.success) {
-            setGoogleAlert(true);
-        } else {
-            setGoogleAlert(false);
-            navigate("/home");
-        }
-    } catch (error) {
-        console.error("Server error:", error);
-        alert("Something went wrong with login. Try again.");
-    }
-};
-
-    // Note:
-    // I am using two google login or signin button
-    // because signInWithPopup is not working in mobile
-    // but its working fine in laptop and signInWithPopup looks good in laptop
-    // so that i am using both buttons...
-    // handleGoogleLogin - only show in laptop
-    // handleGoogleLoginMobile - only show in mobile
-    const handleGoogleLoginMobile = async () => {
+    const handleGoogleLogin = async () => {
         setGoogleAlert(false)
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         try {
             const result = await signInWithPopup(auth, provider)
             const user = result.user;
@@ -100,6 +61,7 @@ const processGoogleUser = async (user) => {
             alert("Google login failed. Please try again.");
         }
     }
+    
     return (
         <LoginLayout>
             {/* Login Form Container */}
@@ -163,8 +125,8 @@ const processGoogleUser = async (user) => {
                         <span className="mx-4 text-pink-400">OR</span>
                         <div className="flex-grow bg-pink-400 h-px" />
                     </div>
-                    {/* Google Signin Laptop Button */}
-                    <div className="hidden md:flex flex-col items-center">
+                    {/* Google Signin  Button */}
+                    <div className="flex flex-col items-center">
                         <div className="flex justify-center">
                             <button
                                 onClick={handleGoogleLogin}
@@ -186,29 +148,7 @@ const processGoogleUser = async (user) => {
                             <p>Email id already exists. Please Login</p>
                         </motion.div>}
                     </div>
-                    {/* Google Signin Mogile Button */}
-                    <div className="md:hidden flex flex-col items-center">
-                        <div className="flex justify-center">
-                            <button
-                                onClick={handleGoogleLoginMobile}
-                                className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
-                                <i className="fa-brands fa-google" /> Login with Google
-                            </button>
-                        </div>
-                        {googleAlert && <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 300,
-                                damping: 5,
-                                duration: 0.3
-
-                            }}
-                            className="text-red-500 text-xs py-2 rounded-lg">
-                            <p>Email id already exists. Please Login</p>
-                        </motion.div>}
-                    </div>
+                    
 
                     <div className="mb-16 md:mb-0">
                         <p className="text-sm text-white text-center">Don't have an account? <button onClick={handleSignup} className="font-medium text-[#ffbb73]">Create an Account</button></p>
