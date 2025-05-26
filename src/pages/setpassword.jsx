@@ -67,7 +67,7 @@ export default function SetPassword() {
 
                 {/* Heading */}
                 <div>
-                    <h1 className="text-red-500 text-xl font-bold">Set Password</h1>
+                    <h1 className="text-yellow-500  text-xl font-bold">Set Password</h1>
                     <p className="text-gray-100 font-medium text-xs">Set password to login</p>
                 </div>
 
@@ -75,7 +75,7 @@ export default function SetPassword() {
                     {/* Password Input with Floating Label */}
                     <div className="inputContainer">
                         <input onChange={handlePass}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300 p-2"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
                             type="password"
                             id="password"
                             required
@@ -88,7 +88,7 @@ export default function SetPassword() {
                     {/* Confirm Password */}
                     <div className="inputContainer">
                         <input onChange={handleConfirmPass}
-                            className="inputStyle bg-transparent outline-none border-b-2 border-orange-300 p-2"
+                            className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
                             type="password"
                             id="confirm-password"
                             value={confirmPassword}
@@ -99,8 +99,8 @@ export default function SetPassword() {
                         {confirmAlert && <p className="text-xs text-red-500">Password and Confirm Password not match</p>}
                     </div>
                     {/* SignUp Button*/}
-                    <div className="flex justify-between">
-                        <div className="bg-red-600 w-fit text-white font-medium px-5 py-2 rounded-lg">
+                    <div className="flex justify-between mb-48">
+                        <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
                             <button onClick={handleSubmit}>Login</button>
                         </div>
                         {/* notification */}
