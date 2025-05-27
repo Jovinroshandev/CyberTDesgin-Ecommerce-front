@@ -1,36 +1,45 @@
-import { useNavigate } from "react-router-dom"
-import { motion } from "framer-motion";
-import { useState } from "react";
-import LoginLayout from "../components/loginlayout";
-import axios from "axios";
-import { signInWithPopup } from "firebase/auth"
-import { auth, provider } from "../firebase"
+// Import required hooks, libraries and components
+import { useNavigate } from "react-router-dom" // Navigation hook for route redirection
+import { motion } from "framer-motion"; // For animations
+import { useState } from "react"; // React state hook
+import LoginLayout from "../components/loginlayout"; // Custom layout component for login page
+import axios from "axios"; // HTTP client for API requests
+import { signInWithPopup } from "firebase/auth" // Firebase method for Google sign-in popup
+import { auth, provider } from "../firebase"  // Firebase authentication and provider config
 
 
-
+// Login component
 export default function Login() {
+    const navigate = useNavigate(); // Initialize navigation
 
-    const navigate = useNavigate();
-    const handleSignup = () => navigate("/signup") //switch to signup page
-    const [email, setEmail] = useState("") //hold email value
-    const [password, setPassword] = useState("") //hold password value
-    const [emailAlert, setEmailAlert] = useState(false)
-    const [passAlert, setPasssAlert] = useState(false)
-    const [googleAlert, setGoogleAlert] = useState(false)
-    const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
+    // Navigation handler for signup page
+    const handleSignup = () => navigate("/signup")
+
+    // State variables for form inputs and alerts
+    const [email, setEmail] = useState(""); // Email input state
+    const [password, setPassword] = useState(""); // Password input state
+    const [emailAlert, setEmailAlert] = useState(false); // Email error alert
+    const [passAlert, setPasssAlert] = useState(false); // Password error alert
+    const [googleAlert, setGoogleAlert] = useState(false); // Google login alert
+
+    // Backend API base URL (fallbacks to localhost)
+    const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000" // live Backend API URI not exists in env means local Backend API URI run
+    
+     // Handle login with email and password
     const handleLogin = () => {
         axios.post(`${backendAPI}/login`, { email, password })
             .then((response) => {
                 const data = response.data;
                 if (!data.success) {
-                    // Check user email id is exist or not
+                    // Show appropriate alert based on backend error response
                     if (data.error === "User not exists!") {
                         setEmailAlert(true) //Show alert wrong email message
                     } else if (data.error === 'Incorrect password!') {
                         setPasssAlert(true) //show wrong password message
                     }
                 } else {
-                    navigate("/home") // email id and password correct means switch to home screen
+                    // Successful login, navigate to home page
+                    navigate("/home")
                 }
             }).catch((error) => {
                 console.error(error);
@@ -38,20 +47,21 @@ export default function Login() {
             });
     }
 
+    // Handle Google login
     const handleGoogleLogin = async () => {
-        setGoogleAlert(false)
+        setGoogleAlert(false)  // Reset alert
         try {
-            const result = await signInWithPopup(auth, provider)
+            const result = await signInWithPopup(auth, provider) // Google sign-in popup
             const user = result.user;
             const email = user.email;
             const response = await axios.post(`${backendAPI}/google-login`, { email })
             const data = response.data
             if (!data.success) {
-                setGoogleAlert(true)
+                setGoogleAlert(true) // Show alert if email not found
             }
             else {
                 setGoogleAlert(false)
-                navigate("/home")
+                navigate("/home")  // Navigate to home on success
             }
         }
         catch (error) {
@@ -59,9 +69,10 @@ export default function Login() {
             alert("Google login failed. Please try again.");
         }
     }
+    // Component render
     return (
         <LoginLayout>
-            {/* Login Form Container */}
+            {/* Animated container */}
             <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -70,14 +81,14 @@ export default function Login() {
 
                 }}
                 className="flex flex-col gap-8 mx-auto py-4">
-                {/* Heading */}
+                {/* Login Heading */}
                 <div>
                     <h1 className="text-yellow-500 text-xl md:text-3xl font-bold">Login</h1>
                     <p className="text-gray-100 font-medium text-xs md:text-sm">Please Login to continue shopping</p>
                 </div>
 
                 <div className="flex flex-col gap-8 mx-auto w-72">
-                    {/* Email Input with Floating Label */}
+                     {/* Email input field */}
                     <div className="inputContainer">
                         <input
                             onChange={(e) => {
@@ -92,11 +103,11 @@ export default function Login() {
                             style={{ width: "100%" }}
                         />
                         <label htmlFor="email" className="labelStyle text-orange-300">Email</label>
-                        {/* Email Alert Message */}
+                        {/* Email error alert */}
                         {emailAlert && <p className="text-xs text-red-500">User not exists. Kindly create a account</p>}
                     </div>
 
-                    {/* Password Input with Floating Label */}
+                    {/* Password input field */}
                     <div className="inputContainer">
                         <input
                             onChange={(e) => {
@@ -110,19 +121,21 @@ export default function Login() {
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        {/* Password Alert Message */}
+                        {/* Password error alert */}
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
                     <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
                         <button onClick={handleLogin}>Login</button>
                     </div>
-
+                    
+                    {/* Divider */}
                     <div className="flex items-center">
                         <div className="flex-grow bg-pink-400 h-px" />
                         <span className="mx-4 text-pink-400">OR</span>
                         <div className="flex-grow bg-pink-400 h-px" />
                     </div>
-                    {/* Google Signin Button */}
+
+                    {/* Google login button */}
                     <div className="flex flex-col items-center">
                         <div className="flex justify-center">
                             <button
@@ -131,6 +144,7 @@ export default function Login() {
                                 <i className="fa-brands fa-google" /> Login with Google
                             </button>
                         </div>
+                        {/* Google login alert */}
                         {googleAlert && <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}

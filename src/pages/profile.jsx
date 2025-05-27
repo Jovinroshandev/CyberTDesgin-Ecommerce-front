@@ -1,14 +1,14 @@
 import { useEffect } from "react"
 
-export default function Cards({setActiveMenu}){
+export default function Profile({setActiveMenu}){
     useEffect(
             ()=>{
-                setActiveMenu("Card")
+                setActiveMenu("Profile")
             },[]
         )
-    return(
+    return (
         <div>
-            Card
+            Profile
         </div>
     )
 }
