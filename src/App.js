@@ -9,6 +9,7 @@ import SetPassword from "./pages/setpassword"
 import Profile from "./pages/profile"
 import { useState } from "react"
 import Navbar from "./components/navbar"
+import Footer from "./components/footer"
 
 // AppContent component handles route rendering and navbar visibility
 function AppContent(){
@@ -36,6 +37,8 @@ function AppContent(){
         <Route path="/checkout" element={<Checkout setActiveMenu={setActiveMenu}/>}/>
         <Route path="/view-card" element={<Cards setActiveMenu={setActiveMenu}/>}/>
       </Routes>
+      {/* Conditionally render the Navbar only if not on login/signup/set-password pages */}
+      {showNavRoutes && <Footer/>}
     </>
   )
 }

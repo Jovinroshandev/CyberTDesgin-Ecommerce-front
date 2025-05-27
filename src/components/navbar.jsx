@@ -34,9 +34,9 @@ export default function Navbar({ activeMenu }) {
     // Navigation button details
     const MenuDetail = [
         { btnname: "Home", navigator: "/home" ,icon:"fa-solid fa-house-chimney"},
-        { btnname: "Profile", navigator: "/profile" ,icon:"fa-solid fa-user"},
         { btnname: "Products", navigator: "/products",icon:"fa-solid fa-bag-shopping" },
         { btnname: "Card", navigator: "/view-card" ,icon:"fa-solid fa-cart-shopping"},
+        { btnname: "Profile", navigator: "/profile" ,icon:"fa-solid fa-user"},
     ];
 
     // Function to generate navigation buttons
