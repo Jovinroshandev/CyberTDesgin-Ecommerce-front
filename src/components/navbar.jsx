@@ -61,7 +61,7 @@ export default function Navbar({ activeMenu }) {
 
     // Navbar layout
     return (
-        <div className="sticky top-0 z-50 flex justify-between items-center py-1 px-3 md:py-3 md:px-8 bg-pink-700">
+        <div className="sticky top-0 z-50 flex justify-between items-center py-1 px-3 md:py-3 md:px-8 lg:px-16 bg-pink-700">
              {/* Logo */}
             <div>
                 <img className="w-20" src={Logo} alt="Logo" />
