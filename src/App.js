@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route , useLocation} from "react-router-dom"
 import Home from "./pages/home"
 import Products from "./pages/products"
 import Checkout from "./pages/checkout"
-import Cards from "./pages/cards-page"
+import Cards from "./pages/cart-page"
 import Login from "./pages/login"
 import Signup from "./pages/signup"
 import SetPassword from "./pages/setpassword"
@@ -10,6 +10,8 @@ import Profile from "./pages/profile"
 import { useState } from "react"
 import Navbar from "./components/navbar"
 import Footer from "./components/footer"
+import ProductDetails from "./pages/product-details"
+import AdminManage from "./pages/adminpage"
 
 // AppContent component handles route rendering and navbar visibility
 function AppContent(){
@@ -35,7 +37,10 @@ function AppContent(){
         <Route path="/profile" element={<Profile setActiveMenu={setActiveMenu}/>}/>
         <Route path="/products" element={<Products setActiveMenu={setActiveMenu}/>}/>
         <Route path="/checkout" element={<Checkout setActiveMenu={setActiveMenu}/>}/>
-        <Route path="/view-card" element={<Cards setActiveMenu={setActiveMenu}/>}/>
+        <Route path="/view-cart" element={<Cards setActiveMenu={setActiveMenu}/>}/>
+        <Route path="/product-details" element={<ProductDetails/>}/>
+        <Route path="/admin-management" element={<AdminManage/>}/>
+        
       </Routes>
       {/* Conditionally render the Navbar only if not on login/signup/set-password pages */}
       {showNavRoutes && <Footer/>}

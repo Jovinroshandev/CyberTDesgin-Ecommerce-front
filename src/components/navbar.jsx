@@ -35,7 +35,7 @@ export default function Navbar({ activeMenu }) {
     const MenuDetail = [
         { btnname: "Home", navigator: "/home" ,icon:"fa-solid fa-house-chimney"},
         { btnname: "Products", navigator: "/products",icon:"fa-solid fa-bag-shopping" },
-        { btnname: "Card", navigator: "/view-card" ,icon:"fa-solid fa-cart-shopping"},
+        { btnname: "Cart", navigator: "/view-cart" ,icon:"fa-solid fa-cart-shopping"},
         { btnname: "Profile", navigator: "/profile" ,icon:"fa-solid fa-user"},
     ];
 
@@ -70,7 +70,7 @@ export default function Navbar({ activeMenu }) {
              {/* Hamburger menu for mobile */}
             <div className="md:hidden">
                 <button aria-label="Open Menu" onClick={() => setSideNav(true)}>
-                    <i className="text-white fa-solid fa-bars"></i>
+                    <i className="text-white text-2xl fa-solid fa-bars"></i>
                 </button>
             </div>
 
@@ -93,11 +93,13 @@ export default function Navbar({ activeMenu }) {
                 >
                     {/* Close button inside sidebar */}
                     <button aria-label="Close Menu" onClick={() => setSideNav(false)}>
-                        <i className="absolute top-3 right-3 text-lg fa-solid fa-circle-xmark"></i>
+                        <i className="absolute top-3 right-3 text-2xl fa-solid fa-xmark"></i>
                     </button>
 
                     {/* Sidebar menu buttons */}
-                    <MenuBtn />
+                    <div className="flex flex-col gap-10 mt-10">
+                        <MenuBtn />
+                    </div>
                 </motion.div>
             )}
         </div>

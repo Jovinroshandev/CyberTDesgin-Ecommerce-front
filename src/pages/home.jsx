@@ -1,78 +1,45 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import BannerImageMobile from "../assets/image/Home_Page_Banner_Mobile.png"
 import BannerImageLaptop from "../assets/image/Home_Page_Banner_Laptop.png"
 import ItemCard from "../components/item-card"
-import Tshirt1 from "../assets/dress-image/tshirt1.png"
 import { useNavigate } from "react-router-dom"
-
+import axios from "axios"
+// Backend API base URL (fallbacks to localhost)
+const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
 
 const ShopCard = () => {
-    const CardDetails = [
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "3",
-            reviewCount: "100",
-            price: "2000"
-        },
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "4",
-            reviewCount: "23",
-            price: "2000"
-        },
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "4",
-            reviewCount: "23",
-            price: "2000"
-        },
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "4",
-            reviewCount: "23",
-            price: "2000"
-        },
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "4",
-            reviewCount: "23",
-            price: "2000"
-        },
-        {
-            image: Tshirt1,
-            headinfo: "T-shirt with Sunglasses",
-            descinfo: "Best Summer Ware and Beach Party Ware",
-            starCount: "4",
-            reviewCount: "23",
-            price: "2000"
-        },
-    ]
+    const [products, setProducts] = useState([]);
+    // console.log(products)
+    useEffect(() => {
+        const fetchCardData = async () => {
+            try {
+                const response = await axios.get(`${backendAPI}/get-data`);
+                const items = response.data.data
+                const filteredItems = items.filter(i=>i.screenOption == "both")
+                setProducts(filteredItems);
+            } catch (error) {
+                console.error("Failed to fetch card data:", error);
+            }
+        };
+
+        fetchCardData();
+    }, []);
+
     return (
         <>
-            {CardDetails.map((item, index) => (
+            {products.map((item, index) => (
                 <ItemCard
+                    id={item._id}
                     key={index}
-                    image={item.image}
-                    head={item.headinfo}
-                    desc={item.descinfo}
-                    star_count={item.starCount}
-                    review_count={item.reviewCount}
-                    price={item.price}
+                    image={item.imageURL}
+                    name={item.productName}
+                    desc={item.productDesc}
+                    price={item.productPrice}
                 />
             ))}
         </>
-    )
-}
+    );
+};
 
 export default function Home({ setActiveMenu }) {
     useEffect(
@@ -83,6 +50,7 @@ export default function Home({ setActiveMenu }) {
     const navigate = useNavigate();
     return (
         <div>
+            {/* <ScrollToTop/> */}
             {/* Offer Banner for Laptop */}
             <div className="hidden md:block md:bg-[#BE185D] md:px-5">
                 <img src={BannerImageLaptop} alt="" />
@@ -102,7 +70,7 @@ export default function Home({ setActiveMenu }) {
 
             {/* Explore More Button*/}
             <div className="flex justify-center mb-8">
-                <button onClick={()=>navigate("/products")} aria-label="View More Product" className="bg-pink-500 px-5 py-1 text-white font-medium rounded-lg">Explore More</button>
+                <button onClick={() => navigate("/products")} aria-label="View More Product" className="bg-pink-500 px-5 py-1 text-white font-medium rounded-lg">Explore More</button>
             </div>
         </div>
     )
