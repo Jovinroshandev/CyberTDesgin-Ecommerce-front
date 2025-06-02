@@ -118,7 +118,7 @@ export default function ItemCard({
       className="bg-pink-100 w-fit p-2 rounded-md shadow-lg"
     >
       <button onClick={() => navigate("/product-details")} className="text-left">
-        <img className="w-36 h-40" src={image} alt={name} />
+        <img className="w-36 h-36" src={image} alt={name} />
         <h1 className="text-pink-600 w-40 truncate text-lg md:text-lg font-bold">{name}</h1>
         <p className="w-40 truncate text-sm text-gray-700 mt-1">{desc}</p>
         <p className="text-sm mt-1">

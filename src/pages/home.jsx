@@ -15,7 +15,7 @@ const ShopCard = () => {
             try {
                 const response = await axios.get(`${backendAPI}/get-data`);
                 const items = response.data.data
-                const filteredItems = items.filter(i=>i.screenOption == "both")
+                const filteredItems = items.filter(i=>i.screenOption == "home")
                 setProducts(filteredItems);
             } catch (error) {
                 console.error("Failed to fetch card data:", error);

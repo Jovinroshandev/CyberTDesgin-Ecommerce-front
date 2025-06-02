@@ -111,10 +111,10 @@ export default function Cards({ setActiveMenu }) {
                     >
                         <div className="flex items-center gap-3">
                             <img className="w-14" src={item.imageURL} alt={item.productName} />
-                            <p className="font-medium">{item.productName}</p>
+                            <p className="font-medium text-wrap w-20 text-xs md:text-lg md:text-nowrap ">{item.productName}</p>
                         </div>
                         <div className="flex items-center gap-1">
-                            <p className="font-medium">Qty: {item.quantity}</p>
+                            <p className="font-medium text-sm md:text-lg">Qty: {item.quantity}</p>
                             <div className="flex flex-col leading-none">
                                 <button onClick={() => incrCartHandler(item.productId)}>
                                     <i className="fa-solid fa-caret-up text-sm"></i>
@@ -130,9 +130,9 @@ export default function Cards({ setActiveMenu }) {
                                 )}
                             </div>
                         </div>
-                        <p className="font-bold">&#8377;{item.productPrice}</p>
+                        <p className="font-bold md:text-lg">&#8377;{item.productPrice}</p>
                         <button onClick={() => deleteCartHandler(item.productId)}>
-                            <i className="fa-solid fa-trash"></i>
+                            <i className="md:text-lg fa-solid fa-trash"></i>
                         </button>
                     </div>
                 ))}
