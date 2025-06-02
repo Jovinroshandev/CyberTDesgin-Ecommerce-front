@@ -115,10 +115,10 @@ export default function ItemCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ type: "spring", damping: 5, stiffness: 300 }}
-      className="bg-pink-100 w-fit px-3 py-2 rounded-md shadow-lg"
+      className="bg-pink-100 w-fit p-2 rounded-md shadow-lg"
     >
       <button onClick={() => navigate("/product-details")} className="text-left">
-        <img className="w-40 h-40" src={image} alt={name} />
+        <img className="w-36 h-40" src={image} alt={name} />
         <h1 className="text-pink-600 w-40 truncate text-lg md:text-lg font-bold">{name}</h1>
         <p className="w-40 truncate text-sm text-gray-700 mt-1">{desc}</p>
         <p className="text-sm mt-1">

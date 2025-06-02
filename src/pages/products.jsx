@@ -60,7 +60,7 @@ export default function Products({ setActiveMenu }) {
                 {/* Content */}
                 <h1 className="text-2xl font-bold text-pink-600 mb-4">Best Deals</h1>
 
-                <div className="flex flex-wrap gap-5">
+                <div className="grid  grid-cols-2  gap-y-6 md:gap-y-16  gap-x-5 w-full md:grid-cols-3 lg:grid-cols-5">
                     <ShopCard />
                 </div>
             </div>
