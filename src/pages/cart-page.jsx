@@ -34,11 +34,11 @@ export default function Cards({ setActiveMenu }) {
 
     const incrCartHandler = async (id) => {
         try {
-            await axios.post(`${backendAPI}/cart/add`, {
-                UserId: userId,
-                productId: id,
-            });
-            await fetchCartItems();
+            await axios.post(`${backendAPI}/cart/add`, { UserId: userId, productId: id });
+            setItems(prev => prev.map(item => item.productId === id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            ));
         } catch (err) {
             console.error("Error increasing cart quantity:", err);
         }
@@ -46,15 +46,16 @@ export default function Cards({ setActiveMenu }) {
 
     const descrCartHandler = async (id) => {
         try {
-            await axios.put(`${backendAPI}/cart/descrease-cart`, {
-                UserId: userId,
-                productId: id,
-            });
-            await fetchCartItems();
+            await axios.put(`${backendAPI}/cart/descrease-cart`, { UserId: userId, productId: id });
+            setItems(prev => prev.map(item => item.productId === id
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            ));
         } catch (err) {
             console.error("Error decreasing cart quantity:", err);
         }
     };
+
 
     const deleteCartHandler = async (id) => {
         try {
