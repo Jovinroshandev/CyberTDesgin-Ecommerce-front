@@ -3,13 +3,15 @@ import Logo from "../assets/image/logo.png"; // Logo image
 import { useNavigate } from "react-router-dom"; // Navigation hook
 import { useState, useEffect, useRef } from "react"; // React hooks
 import { motion } from "framer-motion";  // For animations
+import { jwtDecode } from "jwt-decode";
 
 // Navbar component 
 export default function Navbar({ activeMenu }) {
     const [sideNav, setSideNav] = useState(false);  // State to control sidebar visibility
     const sideNavRef = useRef(null); // Ref to detect clicks outside sidebar
     const navigate = useNavigate(); // Hook to navigate between routes
-
+    const [role,setRole] = useState(null)
+    const [MenuDetail,setManuDetail] = useState([])
     // Close sidebar if user clicks outside it
     useEffect(() => {
         function handleClickOutside(event) {
@@ -30,15 +32,31 @@ export default function Navbar({ activeMenu }) {
     // Active and non-active button styles
     const activeBtn = "bg-pink-200 text-pink-900 px-5 py-1 rounded-full";
     const nonActiveBtn = "bg-pink-800 text-pink-100 px-5 py-1 rounded-full";
-
+    
     // Navigation button details
-    const MenuDetail = [
-        { btnname: "Home", navigator: "/home" ,icon:"fa-solid fa-house-chimney"},
-        { btnname: "Products", navigator: "/products",icon:"fa-solid fa-bag-shopping" },
-        { btnname: "Cart", navigator: "/view-cart" ,icon:"fa-solid fa-cart-shopping"},
-        { btnname: "Profile", navigator: "/profile" ,icon:"fa-solid fa-user"},
-    ];
+    useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+        const user = jwtDecode(token);
+        setRole(user.role);
 
+        if (user.role === "user") {
+            setManuDetail([
+                { btnname: "Home", navigator: "/home", icon: "fa-solid fa-house-chimney" },
+                { btnname: "Products", navigator: "/products", icon: "fa-solid fa-bag-shopping" },
+                { btnname: "Cart", navigator: "/view-cart", icon: "fa-solid fa-cart-shopping" },
+                { btnname: "My Orders", navigator: "/orders", icon: "fa-solid fa-truck" },
+                { btnname: "Profile", navigator: "/profile", icon: "fa-solid fa-user" },
+            ]);
+        } else {
+            setManuDetail([
+                { btnname: "Dashboard", navigator: "/admin", icon: "fa-solid fa-user-tie" },
+            ]);
+        }
+    }
+}, []);
+
+    
     // Function to generate navigation buttons
     const MenuBtn = () => {
         return MenuDetail.map((item) => (

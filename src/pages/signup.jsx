@@ -24,6 +24,7 @@ export default function Signup() {
     const [userExistAlert, setUserExistAlert] = useState(false)
     const [successAlert, setSuccessAlert] = useState(false)
     const [googleAlert, setGoogleAlert] = useState(false)
+    const [loading, setLoading] = useState(false);
 
     // API URL (fallback to localhost if env var is not set)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000"
@@ -44,11 +45,13 @@ export default function Signup() {
 
     // Handle password input change and validate length
     const handlePass = (e) => {
-        const { value } = e.target
-        setPass(value)
-        // Check the new password
-        setPassAlert(value.length > 0 && value.length < 8);
-    }
+        const value = e.target.value;
+        setPass(value);
+        const strongPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        setPassAlert(value.length > 0 && !strongPassword.test(value));
+    };
+
+
 
     // Handle confirm password and match with original password
     const handleConfirmPass = (e) => {
@@ -60,33 +63,39 @@ export default function Signup() {
 
     // Handle form submission for signup
     const handleSubmit = () => {
-        if (email.length !== 0 && password.length !== 0) {
-            const user_api = process.env.REACT_APP_DB_URI||"http://localhost:5000"
-            axios.post(`${user_api}/create-user`, { email, password })
-                .then((data) => {
-                    if (!data.data.success) {
-                        // Show alert if email already exists
-                        setUserExistAlert(true);
-                        setTimeout(() => setUserExistAlert(false), 3000); // hide after 3s
-                    } else {
-                        // Show success message
-                        setSuccessAlert(true)
-                        // clear form
-                        setEmail("")
-                        setPass("")
-                        setConfirmPassword("")
-                        setTimeout(() => navigate("/"), 3000); // After 3s redirect to login/home
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert("Something went wrong. Please try again!");
-                });
-        }
+        if (email.length === 0 || password.length === 0 || confirmPassword.length === 0) return;
+        if (emailAlert || passwordAlert || confirmAlert) return;
+
+        setLoading(true); // start loading
+
+        const user_api = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
+
+        axios.post(`${user_api}/create-user`, { email, password })
+            .then((data) => {
+                setLoading(false); // done loading
+
+                if (!data.data.success) {
+                    setUserExistAlert(true);
+                    setTimeout(() => setUserExistAlert(false), 3000);
+                } else {
+                    setSuccessAlert(true);
+                    setEmail("");
+                    setPass("");
+                    setConfirmPassword("");
+                    setTimeout(() => navigate("/"), 3000);
+                }
+            })
+            .catch((error) => {
+                setLoading(false); // done loading even on error
+                console.error(error);
+                alert("Something went wrong. Please try again!");
+            });
     };
 
+
+
     // Handle Google Sign-in with Firebase
-    const handleGoodleLogin = async () => {
+    const handleGoogleLogin = async () => {
         setGoogleAlert(false)
         try {
             const result = await signInWithPopup(auth, provider)
@@ -101,7 +110,7 @@ export default function Signup() {
             else {
                 setGoogleAlert(false)
                 // Navigate to set-password page with email
-                navigate("/set-password",{state:{email:email}})
+                navigate("/set-password", { state: { email: email } })
             }
         }
         catch (error) {
@@ -156,7 +165,8 @@ export default function Signup() {
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        {passwordAlert && <p className="text-xs text-red-500">At least 8 characters, including a number and a special character</p>}
+                        {passwordAlert && <p className="text-xs text-red-500"> Password must be at least 8 characters, include a number and a special character</p>}
+
                     </div>
                     {/* Confirm Password Input */}
                     <div className="inputContainer">
@@ -171,11 +181,14 @@ export default function Signup() {
                         <label htmlFor="confirm-password" className="labelStyle text-orange-300">Confirm Password</label>
                         {confirmAlert && <p className="text-xs text-red-500">Password and Confirm Password not match</p>}
                     </div>
-                    
+
                     {/* Signup Button and Notifications */}
                     <div className="flex justify-between">
                         <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
-                            <button onClick={handleSubmit}>Signup</button>
+                            <button onClick={handleSubmit} disabled={loading}>
+                                {loading ? "Signing up..." : "Signup"}
+                            </button>
+
                         </div>
 
                         {/* Success Alert */}
@@ -198,7 +211,7 @@ export default function Signup() {
                                 type: "spring",
                                 stiffness: 300,
                                 damping: 5,
-                                duration:0.3
+                                duration: 0.3
 
                             }}
                             className="text-red-500 text-xs py-2 rounded-lg">
@@ -212,12 +225,12 @@ export default function Signup() {
                         <span className="mx-4 text-pink-400">OR</span>
                         <div className="flex-grow bg-pink-400 h-px" />
                     </div>
-                    
+
                     {/* Google Signin Button */}
                     <div className="flex flex-col items-center">
                         <div className="flex justify-center">
                             <button
-                                onClick={handleGoodleLogin}
+                                onClick={handleGoogleLogin}
                                 className="text-pink-600 font-medium bg-white w-fit px-4 py-2 rounded-full">
                                 <i className="fa-brands fa-google" /> Signup with Google
                             </button>

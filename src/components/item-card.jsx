@@ -52,7 +52,7 @@ export default function ItemCard({
     try {
       await axios.post(`${backendAPI}/cart/addtocart`, {
         UserId: userId,
-        productId: id,
+        productId: id
       });
       setCartQuantity((prev) => prev + 1);
     } catch (err) {
@@ -65,7 +65,7 @@ export default function ItemCard({
   const incrCartHandler = async () => {
     setLoading(true);
     try {
-      await axios.post(`${backendAPI}/cart/add`, {
+      await axios.post(`${backendAPI}/cart/increase`, {
         UserId: userId,
         productId: id,
         cartQuantity,
@@ -80,7 +80,7 @@ export default function ItemCard({
 
   const descrCartHandler = async () => {
     try {
-        const response = await axios.put(`${backendAPI}/cart/descrease-cart`, {
+        const response = await axios.put(`${backendAPI}/cart/decrease-cart`, {
             UserId: userId,
             productId: id,
         });

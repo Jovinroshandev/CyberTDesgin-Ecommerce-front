@@ -1,17 +1,17 @@
-// Import required hooks, libraries and components
-import { useNavigate } from "react-router-dom" // Navigation hook for route redirection
+import { useNavigate, useLocation } from "react-router-dom" // Navigation hook for route redirection
 import { motion } from "framer-motion"; // For animations
 import { useState } from "react"; // React state hook
 import LoginLayout from "../components/loginlayout"; // Custom layout component for login page
 import axios from "axios"; // HTTP client for API requests
 import { signInWithPopup } from "firebase/auth" // Firebase method for Google sign-in popup
 import { auth, provider } from "../firebase"  // Firebase authentication and provider config
-
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 // Login component
 export default function Login() {
     const navigate = useNavigate(); // Initialize navigation
-
+    const location = useLocation();
     // Navigation handler for signup page
     const handleSignup = () => navigate("/signup")
 
@@ -19,33 +19,83 @@ export default function Login() {
     const [email, setEmail] = useState(""); // Email input state
     const [password, setPassword] = useState(""); // Password input state
     const [emailAlert, setEmailAlert] = useState(false); // Email error alert
-    const [passAlert, setPasssAlert] = useState(false); // Password error alert
+    const [passAlert, setPassAlert] = useState(false); // Password error alert
     const [googleAlert, setGoogleAlert] = useState(false); // Google login alert
 
     // Backend API base URL (fallbacks to localhost)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000" // live Backend API URI not exists in env means local Backend API URI run
-    
-     // Handle login with email and password
-    const handleLogin = () => {
-        axios.post(`${backendAPI}/login`, { email, password })
-            .then((response) => {
-                const data = response.data;
-                if (!data.success) {
-                    // Show appropriate alert based on backend error response
-                    if (data.error === "User not exists!") {
-                        setEmailAlert(true) //Show alert wrong email message
-                    } else if (data.error === 'Incorrect password!') {
-                        setPasssAlert(true) //show wrong password message
-                    }
-                } else {
-                    // Successful login, navigate to home page
-                    navigate("/home")
+
+    // Handle login with email and password
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        if (token && location.pathname !== "/home") {
+            try {
+                // Basic token structure check
+                if (typeof token !== 'string' || token.split('.').length !== 3) {
+                    console.log("Invalid token structure");
+                    localStorage.removeItem("accessToken");
+                    return;
                 }
-            }).catch((error) => {
-                console.error(error);
-                alert("Something went wrong. Please try again!");
-            });
-    }
+
+                const decoded = jwtDecode(token);
+
+                console.log(decoded)
+                // Check if decoded token has necessary properties
+                if (!decoded) {
+                    console.log("Failed to decode token");
+                    localStorage.removeItem("accessToken");
+                    return;
+                }
+
+                // Check expiration only if exp exists
+                if (decoded.exp && decoded.exp * 1000 <= Date.now()) {
+                    console.log("Token expired");
+                    localStorage.removeItem("accessToken");
+                    return;
+                }
+
+                // If all checks pass, navigate to home
+                if (decoded.role === "admin") {
+                    navigate("/admin")
+                } else {
+                    navigate("/home");
+                }
+            } catch (error) {
+                console.log("Token validation error:", error);
+                localStorage.removeItem("accessToken");
+            }
+        }
+    }, [location.pathname, navigate]);
+
+
+    const handleLogin = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post(`${backendAPI}/login`, { email, password });
+            const data = response.data;
+
+            if (!data.success) {
+                // handle errors...
+            } else {
+                localStorage.setItem("accessToken", data.accessToken);
+
+                const decoded = jwtDecode(data.accessToken);
+                if (decoded.role === "admin") {
+                    navigate("/admin");
+                } else {
+                    navigate("/home");
+                }
+            }
+        } catch (error) {
+            console.error("Login error", error);
+            // handle errors...
+        }
+        setLoading(false);
+    };
+
+
 
     // Handle Google login
     const handleGoogleLogin = async () => {
@@ -61,6 +111,7 @@ export default function Login() {
             }
             else {
                 setGoogleAlert(false)
+                localStorage.setItem("accessToken", data.accessToken);
                 navigate("/home")  // Navigate to home on success
             }
         }
@@ -88,7 +139,7 @@ export default function Login() {
                 </div>
 
                 <div className="flex flex-col gap-8 mx-auto w-72">
-                     {/* Email input field */}
+                    {/* Email input field */}
                     <div className="inputContainer">
                         <input
                             onChange={(e) => {
@@ -112,7 +163,7 @@ export default function Login() {
                         <input
                             onChange={(e) => {
                                 setPassword(e.target.value)
-                                setPasssAlert(false) //reset alert msg
+                                setPassAlert(false) //reset alert msg
                             }}
                             className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300"
                             type="password"
@@ -125,9 +176,12 @@ export default function Login() {
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
                     <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
-                        <button onClick={handleLogin}>Login</button>
+                        <button onClick={handleLogin} disabled={loading}>
+                            {loading ? "Logging in..." : "Login"}
+                        </button>
+
                     </div>
-                    
+
                     {/* Divider */}
                     <div className="flex items-center">
                         <div className="flex-grow bg-pink-400 h-px" />

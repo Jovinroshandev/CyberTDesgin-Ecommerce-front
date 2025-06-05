@@ -19,7 +19,7 @@ export default function Footer() {
                         <li><a href="/home" className="hover:underline">Home</a></li>
                         <li><a href="/products" className="hover:underline">Product</a></li>
                         <li><a href="/view-cart" className="hover:underline">View Card</a></li>
-                        <li><a href="#" className="hover:underline">Order History</a></li>
+                        <li><a href="/orders" className="hover:underline">Order History</a></li>
                     </ul>
                 </div>
 

@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react"
 import axios from "axios";
-
-export default function AdminManage() {
+import { useNavigate } from "react-router-dom";
+export default function AdminManage({setActiveMenu}) {
+    useEffect(() => {
+    setActiveMenu("Dashboard");
+  }, [setActiveMenu]);
+    const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [productName, setProductName] = useState("");
     const [productDesc, setProductDesc] = useState("");
@@ -62,6 +66,12 @@ export default function AdminManage() {
     }, [])
     const handleSend = async () => {
 
+        const token = localStorage.getItem("accessToken");
+
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+
         await axios.post(`${backendAPI}/admin-management`, {
             productName,
             productDesc,
@@ -71,11 +81,12 @@ export default function AdminManage() {
             color,
             badges,
             category
-        }).then((res) => {
-            console.log(res.data)
-            getData();
+        }, config)
+            .then((res) => {
+                console.log(res.data)
+                getData();
 
-        })
+            })
         // Clear file input manually
         setFile(null);
         if (fileInputRef.current) {
@@ -94,16 +105,16 @@ export default function AdminManage() {
         setFile("");
     }
     const handleDelete = async (id) => {
-    try {
-        await axios.delete(`${backendAPI}/delete-product/${id}`);
-        getData(); // Refresh stock list after deletion
-    } catch (err) {
-        console.error("Delete failed", err);
-    }
-};
+        try {
+            await axios.delete(`${backendAPI}/delete-product/${id}`);
+            getData(); // Refresh stock list after deletion
+        } catch (err) {
+            console.error("Delete failed", err);
+        }
+    };
 
     // {_id, productName, productDesc, imageURL, productPrice, screenOption, color, badges, category, __v})
-    const StockContiner = () => {
+    const StockContainer = () => {
         return (
             <div className="mt-10 flex flex-col gap-3">
                 <h2 className="text-lg font-semibold mb-3">Stock List:</h2>
@@ -111,7 +122,7 @@ export default function AdminManage() {
                     <p>No stock data available.</p>
                 ) : (
                     stockData.map((stock, index) => (
-                        <div key={index} className="flex bg-white gap-2 items-center px-1">
+                        <div key={stock._id} className="flex bg-white gap-2 items-center px-1">
                             <div>
                                 <img className="w-20" src={stock.imageURL} alt="" />
                             </div>
@@ -122,11 +133,11 @@ export default function AdminManage() {
                                     <p className="w-fit px-2 py-1 rounded-xl text-center truncate bg-pink-500 text-white font-medium">{stock.screenOption}</p>
                                     <p className="w-fit px-2 py-1 rounded-xl text-center truncate bg-pink-500 text-white font-medium">{stock.badges}</p>
                                     <p className="w-fit px-2 py-1 rounded-xl text-center truncate bg-pink-500 text-white font-medium">{stock.category}</p>
-                                    <p className="w-fit px-2 py-1 rounded-xl text-center truncate" style={{ backgroundColor: stock.color, color: stock.color == "black" || stock.color == "gray" ? "white" : "black" }}>{stock.color}</p>
+                                    <p className="w-fit px-2 py-1 rounded-xl text-center truncate" style={{ backgroundColor: stock.color, color: stock.color === "black" || stock.color === "gray" ? "white" : "black" }}>{stock.color}</p>
                                 </div>
                             </div>
                             <div>
-                                <button onClick={()=>handleDelete(stock._id)}><i className="text-gray-800 fa-solid fa-trash-can"/></button>
+                                <button onClick={() => handleDelete(stock._id)}><i className="text-gray-800 fa-solid fa-trash-can" /></button>
                             </div>
                         </div>
                     ))
@@ -137,7 +148,13 @@ export default function AdminManage() {
 
     return (
         <div className="md:mx-auto bg-pink-100 m-5 md:w-fit p-5 md:p-20">
-            <h1 className="text-2xl md:text-3xl font-bold text-pink-600 md:text-center">Admin Management</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl md:text-3xl font-bold text-pink-600 md:text-center">Admin Management</h1>
+                <button onClick={()=>{
+                    localStorage.removeItem("accessToken")
+                    navigate("/")
+                    }} className="bg-pink-500 shadow-lg text-white border-[2px] border-pink-600 flex items-center gap-1 font-medium px-3 py-2 rounded-xl"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
             <div className="flex md:text-lg md:font-medium flex-col gap-5 md:gap-10 mt-10">
                 <div className="flex justify-between items-center gap-5 md:gap-20">
                     <p>Product Name</p>
@@ -168,11 +185,13 @@ export default function AdminManage() {
                     {!imageUploadStatus ? (
                         <button
                             onClick={handleImage}
-                            className="text-xs bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-xl px-3 py-2"
+                            disabled={imageUploadPendingStatus}
+                            className={`text-xs ${imageUploadPendingStatus ? 'bg-pink-400 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'} text-white font-medium rounded-xl px-3 py-2`}
                         >
                             <i className="fa-solid fa-cloud-arrow-up mr-1" />
                             {imageUploadPendingStatus ? "Uploading..." : "Upload"}
                         </button>
+
                     ) : (
                         <button
                             disabled
@@ -239,7 +258,7 @@ export default function AdminManage() {
                 </div>
             </div>
             <div>
-                <StockContiner />
+                <StockContainer />
             </div>
         </div>
     )
