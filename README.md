@@ -16,6 +16,11 @@ Functionality:
  ![image](https://github.com/user-attachments/assets/5c977c02-ac33-47d8-8f54-c88eb0f8fb2d)
 
 4.	Admin Page – Admin only able to access
+![image](https://github.com/user-attachments/assets/989ac9e4-3fa4-4274-9baf-2d8ce21ddd51)
+![image](https://github.com/user-attachments/assets/d784a7fd-a7bd-4318-a654-f4eb2ac749f8)
+![image](https://github.com/user-attachments/assets/76f16f42-6cff-4bf0-93a3-96080a00bc83)
+![image](https://github.com/user-attachments/assets/001e1a97-576a-4b02-80e9-4aecf060034e)
+![image](https://github.com/user-attachments/assets/86c5744e-bb64-4a1f-b2bf-28a45716ea6c)
 
 5.	Product – All products
 
