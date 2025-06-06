@@ -32,6 +32,7 @@ PAYMENT PROCESS:
 ![image](https://github.com/user-attachments/assets/bc4b349b-3040-44c2-b6a7-8ee5283abfc1)
 DEMO CARD DETAILS:
 CARD NO: 4111 1111 1111 1111
+
 OTHER FIELD USE ANY NUMBERS
 ![image](https://github.com/user-attachments/assets/60c51e07-6274-4648-8656-a8a361726373)
 ANY 6 NUMBER FOR OTP (EX:123456)
@@ -39,6 +40,8 @@ ANY 6 NUMBER FOR OTP (EX:123456)
 8.	Order History – View order history
  ![image](https://github.com/user-attachments/assets/2d82e288-cca0-4ece-95d8-8775247e2980)
 ![image](https://github.com/user-attachments/assets/fcc36366-053c-461c-9c3e-0ca9afd18420)
+9. Profile Page
+![image](https://github.com/user-attachments/assets/32bfaf35-c0e4-4f49-9ddd-32bcae90c746)
 
 Overview:
 📦 Tech Stack
