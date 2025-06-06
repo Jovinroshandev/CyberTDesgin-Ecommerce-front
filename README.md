@@ -22,6 +22,8 @@ Functionality:
  ![image](https://github.com/user-attachments/assets/be396772-7070-4626-b4ee-012390bf6298)
 
 6.	Product Details – View product details
+   ![image](https://github.com/user-attachments/assets/ad02e76f-df8a-4414-8299-9db0d7940a72)
+
 7.	Cart – Place order and manage quantity
  ![image](https://github.com/user-attachments/assets/f0611f82-6c81-4e7f-930a-eb5528b290d4)
 
