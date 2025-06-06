@@ -10,7 +10,6 @@ export default function Navbar({ activeMenu }) {
     const [sideNav, setSideNav] = useState(false);  // State to control sidebar visibility
     const sideNavRef = useRef(null); // Ref to detect clicks outside sidebar
     const navigate = useNavigate(); // Hook to navigate between routes
-    const [role,setRole] = useState(null)
     const [MenuDetail,setManuDetail] = useState([])
     // Close sidebar if user clicks outside it
     useEffect(() => {
@@ -38,7 +37,6 @@ export default function Navbar({ activeMenu }) {
     const token = localStorage.getItem("accessToken");
     if (token) {
         const user = jwtDecode(token);
-        setRole(user.role);
 
         if (user.role === "user") {
             setManuDetail([

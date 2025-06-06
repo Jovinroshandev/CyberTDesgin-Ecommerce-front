@@ -2,9 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 // Backend API base URL
 const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
+
+
 
 export default function ItemCard({
   id,
@@ -13,9 +16,11 @@ export default function ItemCard({
   desc,
   star_count = 4,
   review_count = 89,
-  price,
-  userId = "jovin", // Ideally get this from props or context
+  price
 }) {
+  const token = localStorage.getItem("accessToken");
+  const decoded = jwtDecode(token);
+  const userId = decoded.email;
   const navigate = useNavigate();
   const [cartQuantity, setCartQuantity] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -117,7 +122,7 @@ export default function ItemCard({
       transition={{ type: "spring", damping: 5, stiffness: 300 }}
       className="bg-pink-100 w-fit p-2 rounded-md shadow-lg"
     >
-      <button onClick={() => navigate("/product-details")} className="text-left">
+      <button onClick={() => navigate("/product-details",{state:{image,name,desc}})} className="text-left">
         <img className="w-36 h-36" src={image} alt={name} />
         <h1 className="text-pink-600 w-40 truncate text-lg md:text-lg font-bold">{name}</h1>
         <p className="w-40 truncate text-sm text-gray-700 mt-1">{desc}</p>

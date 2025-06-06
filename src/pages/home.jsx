@@ -45,7 +45,7 @@ export default function Home({ setActiveMenu }) {
     useEffect(
         () => {
             setActiveMenu("Home")
-        }, []
+        }, [setActiveMenu]
     )
     const navigate = useNavigate();
     return (
@@ -70,7 +70,10 @@ export default function Home({ setActiveMenu }) {
 
             {/* Explore More Button*/}
             <div className="flex justify-center mb-8">
-                <button onClick={() => navigate("/products")} aria-label="View More Product" className="bg-pink-500 px-5 py-1 text-white font-medium rounded-lg">Explore More</button>
+                <button onClick={() => {
+                    navigate("/products")
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    }} aria-label="View More Product" className="bg-pink-500 px-5 py-1 text-white font-medium rounded-lg">Explore More</button>
             </div>
         </div>
     )

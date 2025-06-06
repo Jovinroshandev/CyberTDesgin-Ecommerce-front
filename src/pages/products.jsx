@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ItemCard from "../components/item-card";
 import axios from "axios";
-import SpecailOfferBanner from "../assets/image/special-offer.png";
+import SpecialOfferBanner from "../assets/image/special-offer.png";
 import { motion } from "framer-motion";
 
 const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000";
@@ -30,6 +30,8 @@ export default function Products({ setActiveMenu }) {
     const [lastSearch, setLastSearch] = useState("");
     const [resultNotification, setResultNotification] = useState(false);
 
+    const [searchResults, setSearchResults] = useState([]);
+
     const [categoryFilter, setCategoryFilter] = useState("");
     const [badgeFilter, setBadgeFilter] = useState("");
     const [colorFilter, setColorFilter] = useState("");
@@ -56,17 +58,11 @@ export default function Products({ setActiveMenu }) {
         fetchCardData();
     }, [setActiveMenu]);
 
-    const applyAllFilters = (search = "", category = categoryFilter, badge = badgeFilter, color = colorFilter) => {
-        const searchTerm = search.toLowerCase();
+    // Apply filters on searchResults or allProducts if no searchResults
+    const applyFilters = (category = categoryFilter, badge = badgeFilter, color = colorFilter) => {
+        const baseList = searchResults.length > 0 ? searchResults : allProducts;
 
-        const filtered = allProducts.filter((product) =>
-            (!searchTerm ||
-                product.productName?.toLowerCase().includes(searchTerm) ||
-                product.productDesc?.toLowerCase().includes(searchTerm) ||
-                product.category?.toLowerCase().includes(searchTerm) ||
-                product.color?.toLowerCase().includes(searchTerm) ||
-                product.badges?.toLowerCase().includes(searchTerm) ||
-                product.productPrice?.toString().includes(searchTerm)) &&
+        const filtered = baseList.filter(product =>
             (!category || product.category?.toLowerCase().includes(category)) &&
             (!badge || product.badges?.toLowerCase().includes(badge)) &&
             (!color || product.color?.toLowerCase().includes(color))
@@ -78,68 +74,79 @@ export default function Products({ setActiveMenu }) {
 
     const handleSearchSubmit = () => {
         if (searchInput.length > 0) {
+            const searchTerm = searchInput.toLowerCase();
+            const filteredSearch = allProducts.filter(product =>
+                product.productName?.toLowerCase().includes(searchTerm) ||
+                product.productDesc?.toLowerCase().includes(searchTerm) ||
+                product.category?.toLowerCase().includes(searchTerm) ||
+                product.color?.toLowerCase().includes(searchTerm) ||
+                product.badges?.toLowerCase().includes(searchTerm) ||
+                product.productPrice?.toString().includes(searchTerm)
+            );
+
+            setSearchResults(filteredSearch);
             setLastSearch(searchInput);
-            applyAllFilters(searchInput);
             setSearchInput("");
-            window.scrollTo({ top: 0, behavior: "smooth" })
+
+            // Reset filters when new search is done
+            setCategoryFilter("");
+            setBadgeFilter("");
+            setColorFilter("");
+            setCategoryFilterNav(false);
+            setBadgesFilterNav(false);
+            setColorFilterNav(false);
+
+            setProducts(filteredSearch);
+            setResultNotification(true);
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     };
 
     const handleReset = () => {
+        setSearchInput("");
+        setLastSearch("");
         setCategoryFilter("");
         setBadgeFilter("");
         setColorFilter("");
-        setLastSearch("");
+        setCategoryFilterNav(false);
+        setBadgesFilterNav(false);
+        setColorFilterNav(false);
+
+        setSearchResults([]);
         setProducts(allProducts);
         setResultNotification(false);
     };
 
     const handleCategoryFilter = (e) => {
         const value = e.target.value.toLowerCase();
-        setLastSearch(value)
         setCategoryFilter(value);
-        setCategoryFilterNav(false)
-        applyAllFilters(lastSearch, value, badgeFilter, colorFilter);
-        // Hide result notification if all filters are cleared
-        if (value === "") {
-            setCategoryFilter("");
-            setProducts(allProducts);
-            setResultNotification(false);
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" })
+        setCategoryFilterNav(false);
+
+        // Always apply filters with updated values
+        applyFilters(value, badgeFilter, colorFilter);
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
+
 
     const handleBadgeFilter = (e) => {
         const value = e.target.value.toLowerCase();
-        setLastSearch(value)
         setBadgeFilter(value);
-        setBadgesFilterNav(false)
-        applyAllFilters(lastSearch, categoryFilter, value, colorFilter);
-        // Hide result notification if all filters are cleared
-        if (value === "") {
-            setBadgeFilter("")
-            setProducts(allProducts);
-            setResultNotification(false);
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" })
+        setBadgesFilterNav(false);
+        applyFilters(categoryFilter, value, colorFilter);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const handleColorFilter = (e) => {
         const value = e.target.value.toLowerCase();
-        setLastSearch(value)
         setColorFilter(value);
-        setColorFilterNav(false)
-        applyAllFilters(lastSearch, categoryFilter, badgeFilter, value);
-        // Hide result notification if all filters are cleared
-        if (value === "") {
-            setColorFilter("")
-            setProducts(allProducts)
-            setResultNotification(false);
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" })
+        setColorFilterNav(false);
+        applyFilters(categoryFilter, badgeFilter, value);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    
+
     return (
         <div className="mx-auto">
             <div className="px-4 mx-auto py-8 md:px-14 lg:px-20">
@@ -161,7 +168,7 @@ export default function Products({ setActiveMenu }) {
                     </button>
                 </div>
 
-                {resultNotification && (
+                {lastSearch && resultNotification && (
                     <div className="mt-2 flex items-center gap-2">
                         <p className="font-medium">
                             <span className="text-pink-600">Result for</span> "{lastSearch}"
@@ -174,24 +181,45 @@ export default function Products({ setActiveMenu }) {
                         </button>
                     </div>
                 )}
-
-                {/* Filter buttons */}
-                <div className="md:mx-44 flex justify-end gap-2">
-                    <button onClick={() => {
-                        setCategoryFilterNav(!categoryFilterNav);
-                        setBadgesFilterNav(false);
-                        setColorFilterNav(false);
-                    }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Category</button>
-                    <button onClick={() => {
-                        setBadgesFilterNav(!badgesFilterNav);
-                        setCategoryFilterNav(false);
-                        setColorFilterNav(false);
-                    }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Badges</button>
-                    <button onClick={() => {
-                        setColorFilterNav(!colorFilterNav);
-                        setCategoryFilterNav(false);
-                        setBadgesFilterNav(false);
-                    }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Color</button>
+                <div className="flex flex-col md:flex-row md:justify-between">
+                    <div className="flex text-xs md:text-sm gap-3 mt-2">
+                        {categoryFilter &&
+                            <p className="flex gap-2 items-center bg-sky-500 w-fit px-2 py-1 rounded-full text-white font-medium">{categoryFilter} <button onClick={() => {
+                                setCategoryFilter("")
+                                applyFilters("", badgeFilter, colorFilter);
+                            }}><i className="fa-solid fa-circle-xmark" /></button></p>
+                        }
+                        {badgeFilter &&
+                            <p className="flex gap-2 items-center bg-sky-500 w-fit px-2 py-1 rounded-full text-white font-medium">{badgeFilter} <button onClick={() => {
+                                setBadgeFilter("")
+                                applyFilters(categoryFilter, "", colorFilter);
+                            }}><i className="fa-solid fa-circle-xmark" /></button></p>
+                        }
+                        {colorFilter &&
+                            <p className="flex gap-2 items-center bg-sky-500 w-fit px-2 py-1 rounded-full text-white font-medium">{colorFilter} <button onClick={() => {
+                                setColorFilter("")
+                                applyFilters(categoryFilter,badgeFilter, "");
+                            }}><i className="fa-solid fa-circle-xmark" /></button></p>
+                        }
+                    </div>
+                    {/* Filter buttons */}
+                    <div className="md:mx-44 flex gap-2">
+                        <button onClick={() => {
+                            setCategoryFilterNav(!categoryFilterNav);
+                            setBadgesFilterNav(false);
+                            setColorFilterNav(false);
+                        }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Category</button>
+                        <button onClick={() => {
+                            setBadgesFilterNav(!badgesFilterNav);
+                            setCategoryFilterNav(false);
+                            setColorFilterNav(false);
+                        }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Badges</button>
+                        <button onClick={() => {
+                            setColorFilterNav(!colorFilterNav);
+                            setCategoryFilterNav(false);
+                            setBadgesFilterNav(false);
+                        }} className="bg-gray-800 text-white px-3 py-1 mt-2 rounded-lg text-xs md:text-sm"><i className="fa-solid fa-filter" /> Color</button>
+                    </div>
                 </div>
 
                 {/* Category Filter */}
@@ -306,14 +334,14 @@ export default function Products({ setActiveMenu }) {
                 {products.length === 0 && (
                     <div className="mb-20">
                         <p className="text-center text-gray-500 mt-6">
-                            No products found for "{lastSearch}".
+                            No products found{lastSearch ? ` for "${lastSearch}"` : ""}.
                         </p>
                     </div>
                 )}
 
                 {/* Special Offer */}
                 <div>
-                    <img className="mt-5" src={SpecailOfferBanner} alt="Special Offer Banner" />
+                    <img className="mt-5" src={SpecialOfferBanner} alt="Special Offer Banner" />
                 </div>
             </div>
         </div>

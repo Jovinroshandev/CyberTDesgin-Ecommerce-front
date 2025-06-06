@@ -71,29 +71,49 @@ export default function Login() {
 
 
     const handleLogin = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.post(`${backendAPI}/login`, { email, password });
-            const data = response.data;
+    setLoading(true);
+    setEmailAlert(false);
+    setPassAlert(false);
 
-            if (!data.success) {
-                // handle errors...
+    try {
+        const response = await axios.post(`${backendAPI}/login`, { email, password });
+        const data = response.data;
+
+        // Save token and navigate if successful
+        if (data.success) {
+            localStorage.setItem("accessToken", data.accessToken);
+
+            const decoded = jwtDecode(data.accessToken);
+            if (decoded.role === "admin") {
+                navigate("/admin");
             } else {
-                localStorage.setItem("accessToken", data.accessToken);
-
-                const decoded = jwtDecode(data.accessToken);
-                if (decoded.role === "admin") {
-                    navigate("/admin");
-                } else {
-                    navigate("/home");
-                }
+                navigate("/home");
             }
-        } catch (error) {
-            console.error("Login error", error);
-            // handle errors...
         }
-        setLoading(false);
-    };
+    } catch (error) {
+        if (error.response) {
+            const status = error.response.status;
+            const message = error.response.data?.error || "Unknown error";
+
+            // Match backend messages
+            if (status === 404 && message === "User does not exist!") {
+                setEmailAlert(true);
+            } else if (status === 401 && message === "Incorrect password!") {
+                setPassAlert(true);
+            } else {
+                alert(`Login failed: ${message}`);
+            }
+        } else if (error.request) {
+            alert("No response from server. Please check your network.");
+        } else {
+            alert("Unexpected error occurred during login.");
+        }
+    }
+
+    setLoading(false);
+};
+
+
 
 
 

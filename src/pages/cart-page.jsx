@@ -2,10 +2,13 @@ import { useEffect, useState, useCallback } from "react";
 import cartImage from "../assets/cart-image/cart-image1.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 export default function Cards({ setActiveMenu }) {
     const navigate = useNavigate();
-    const userId = "jovin"; // Ideally should come from auth/user context
+    const token = localStorage.getItem("accessToken");
+    const decoded = jwtDecode(token);
+    const userId = decoded.email;
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([]);
 
@@ -72,7 +75,7 @@ export default function Cards({ setActiveMenu }) {
     };
 
     if (loading) {
-        return <p className="text-center mt-20"><i className="fa-solid fa-hourglass fa-spin"></i> Loading...</p>;
+        return <p className="text-center mt-20"><i className="fa-solid fa-spinner fa-spin-pulse"></i> Loading...</p>;
     }
 
     if (items.length === 0) {
@@ -160,7 +163,7 @@ export default function Cards({ setActiveMenu }) {
                     >
                         <div className="flex items-center gap-3">
                             <img className="w-14" src={item.imageURL} alt={item.productName} />
-                            <p className="font-medium text-wrap w-20 text-xs md:text-lg md:text-nowrap ">{item.productName}</p>
+                            <p className="font-medium text-wrap w-20 md:w-96 text-xs md:text-lg md:truncate ">{item.productName}</p>
                         </div>
                         <div className="flex items-center gap-1">
                             <p className="font-medium text-sm md:text-lg">Qty: {item.quantity}</p>
