@@ -34,10 +34,10 @@ export default function SetPassword() {
         }
     };
 
-    const handleSubmit = ()=>{
+    const handleSubmit = async()=>{
         const {email} = location.state || {} //use empty object for error handle
         if (email.length !== 0 && password.length !== 0) {
-            axios.post(`${backendAPI}/create-user`, { email, password })
+            await axios.post(`${backendAPI}/create-user`, { email, password })
                 .then((data) => {
                     if (data.data.success) {
                         setAccountStatus(true) // Enable Account creation success notifiv=cation
@@ -115,9 +115,6 @@ export default function SetPassword() {
                             <p>Account Created Successfully! <i className="fa-regular fa-circle-check" /></p>
                         </motion.div>}
                     </div>
-                    
-
-                    
                 </div>
             </motion.div>
         </LoginLayout>
