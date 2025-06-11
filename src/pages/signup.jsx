@@ -174,8 +174,7 @@ export default function Signup() {
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        {showPassword ? <button onClick={()=>setShowPassword(false)} className="absolute right-2"><i class="fa-solid fa-eye text-orange-300"/></button>
-                        :<button onClick={()=>setShowPassword(true)}  className="absolute right-2"><i class="fa-solid fa-eye-slash text-orange-300"/></button>}
+                        <button onClick={()=>setShowPassword(!showPassword)} className="absolute right-2"><i class={`fa-solid fa-${showPassword?"eye":"eye-slash"} text-orange-300`}/></button>
                         {passwordAlert && <p className="text-xs text-red-400"> Password must be at least 8 characters, include a number and a special character</p>}
 
                     </div>
@@ -190,8 +189,7 @@ export default function Signup() {
                             placeholder=""
                         />
                         <label htmlFor="confirm-password" className="labelStyle text-orange-300">Confirm Password</label>
-                        {showConfirmPassword ? <button onClick={()=>setShowConfirmPassword(false)} className="absolute right-2"><i class="fa-solid fa-eye text-orange-300"/></button>
-                        :<button onClick={()=>setShowConfirmPassword(true)}  className="absolute right-2"><i class="fa-solid fa-eye-slash text-orange-300"/></button>}
+                        <button onClick={()=>setShowConfirmPassword(!showConfirmPassword)} className="absolute right-2"><i class={`fa-solid fa-${showConfirmPassword?"eye":"eye-slash"} text-orange-300`}/></button>
                         {confirmAlert && <p className="text-xs text-red-500">Password and Confirm Password not match</p>}
                     </div>
 

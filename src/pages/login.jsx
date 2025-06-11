@@ -21,7 +21,7 @@ export default function Login() {
     const [emailAlert, setEmailAlert] = useState(false); // Email error alert
     const [passAlert, setPassAlert] = useState(false); // Password error alert
     const [googleAlert, setGoogleAlert] = useState(false); // Google login alert
-
+    const [showPassword, setShowPassword] = useState(false)
     // Backend API base URL (fallbacks to localhost)
     const backendAPI = process.env.REACT_APP_BACKEND_URI || "http://localhost:5000" // live Backend API URI not exists in env means local Backend API URI run
 
@@ -186,12 +186,13 @@ export default function Login() {
                                 setPassAlert(false) //reset alert msg
                             }}
                             className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300"
-                            type="password"
+                            type={showPassword?"text":"password"}
                             id="password"
                             required
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
+                        <button onClick={()=>setShowPassword(!showPassword)} className="absolute right-2"><i class={`fa-solid fa-${showPassword?"eye":"eye-slash"} text-orange-300`}/></button>
                         {/* Password error alert */}
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
