@@ -16,6 +16,8 @@ export default function Signup() {
     const [email, setEmail] = useState("")
     const [password, setPass] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [showPassword,setShowPassword] = useState(false)
+    const [showConfirmPassword,setShowConfirmPassword] = useState(false)
 
     // Validation alert states
     const [emailAlert, setEmailAlert] = useState(false);
@@ -45,16 +47,20 @@ export default function Signup() {
 
     // Handle password input change and validate length
     const handlePass = (e) => {
+        setConfirmAlert(false)
         const value = e.target.value;
         setPass(value);
         const strongPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
         setPassAlert(value.length > 0 && !strongPassword.test(value));
+        // Check Password and Confirm Password are Same or not
+        setConfirmAlert(confirmPassword.length !== 0 && value.length !== 0 && value !== confirmPassword);
     };
 
 
 
     // Handle confirm password and match with original password
     const handleConfirmPass = (e) => {
+        setConfirmAlert(false)
         const { value } = e.target;
         setConfirmPassword(value)
         // Check Password and Confirm Password are Same or not
@@ -118,6 +124,9 @@ export default function Signup() {
             alert("Google login failed. Please try again.");
         }
     }
+
+    const isInvalid = !email || !password || !confirmPassword || emailAlert || 
+                passwordAlert || confirmAlert;
     return (
         <LoginLayout>
             {/* Animated Signup Form Container */}
@@ -158,37 +167,41 @@ export default function Signup() {
                     <div className="inputContainer">
                         <input onChange={handlePass}
                             className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
-                            type="password"
+                            type={showPassword? "text":"password"}
                             id="password"
                             required
                             value={password}
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        {passwordAlert && <p className="text-xs text-red-500"> Password must be at least 8 characters, include a number and a special character</p>}
+                        {showPassword ? <button onClick={()=>setShowPassword(false)} className="absolute right-2"><i class="fa-solid fa-eye text-orange-300"/></button>
+                        :<button onClick={()=>setShowPassword(true)}  className="absolute right-2"><i class="fa-solid fa-eye-slash text-orange-300"/></button>}
+                        {passwordAlert && <p className="text-xs text-red-400"> Password must be at least 8 characters, include a number and a special character</p>}
 
                     </div>
                     {/* Confirm Password Input */}
                     <div className="inputContainer">
                         <input onChange={handleConfirmPass}
                             className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300 p-2"
-                            type="password"
+                            type={showConfirmPassword?"text":"password"}
                             id="confirm-password"
                             value={confirmPassword}
                             required
                             placeholder=""
                         />
                         <label htmlFor="confirm-password" className="labelStyle text-orange-300">Confirm Password</label>
+                        {showConfirmPassword ? <button onClick={()=>setShowConfirmPassword(false)} className="absolute right-2"><i class="fa-solid fa-eye text-orange-300"/></button>
+                        :<button onClick={()=>setShowConfirmPassword(true)}  className="absolute right-2"><i class="fa-solid fa-eye-slash text-orange-300"/></button>}
                         {confirmAlert && <p className="text-xs text-red-500">Password and Confirm Password not match</p>}
                     </div>
 
                     {/* Signup Button and Notifications */}
                     <div className="flex justify-between">
-                        <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
-                            <button onClick={handleSubmit} disabled={loading}>
+                        <div className={`${ isInvalid? "bg-pink-700 text-pink-400" : "bg-gray-800 text-white"}  w-fit font-medium px-5 py-2 rounded-lg`}>
+                            <button onClick={handleSubmit} 
+                            disabled={loading || isInvalid}>
                                 {loading ? "Signing up..." : "Signup"}
                             </button>
-
                         </div>
 
                         {/* Success Alert */}
