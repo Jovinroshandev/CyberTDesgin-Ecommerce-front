@@ -1,11 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom" // Navigation hook for route redirection
 import { motion } from "framer-motion"; // For animations
-import { useState } from "react"; // React state hook
+import { useEffect, useState } from "react"; // React state hook
 import LoginLayout from "../components/loginlayout"; // Custom layout component for login page
 import axios from "axios"; // HTTP client for API requests
 import { signInWithPopup } from "firebase/auth" // Firebase method for Google sign-in popup
 import { auth, provider } from "../firebase"  // Firebase authentication and provider config
-import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
 // Login component
@@ -71,75 +70,82 @@ export default function Login() {
 
 
     const handleLogin = async () => {
-    setLoading(true);
-    setEmailAlert(false);
-    setPassAlert(false);
+        setLoading(true);
+        setEmailAlert(false);
+        setPassAlert(false);
 
-    try {
-        const response = await axios.post(`${backendAPI}/login`, { email, password });
-        const data = response.data;
+        try {
+            const response = await axios.post(`${backendAPI}/login`, { email, password });
+            const data = response.data;
 
-        // Save token and navigate if successful
-        if (data.success) {
-            localStorage.setItem("accessToken", data.accessToken);
+            // Save token and navigate if successful
+            if (data.success) {
+                localStorage.setItem("accessToken", data.accessToken);
 
-            const decoded = jwtDecode(data.accessToken);
-            if (decoded.role === "admin") {
-                navigate("/admin");
+                const decoded = jwtDecode(data.accessToken);
+                if (decoded.role === "admin") {
+                    navigate("/admin");
+                } else {
+                    navigate("/home");
+                }
+            }
+        } catch (error) {
+            if (error.response) {
+                const status = error.response.status;
+                const message = error.response.data?.error || "Unknown error";
+
+                // Match backend messages
+                if (status === 404 && message === "User does not exist!") {
+                    setEmailAlert(true);
+                } else if (status === 401 && message === "Incorrect password!") {
+                    setPassAlert(true);
+                } else {
+                    alert(`Login failed: ${message}`);
+                }
+            } else if (error.request) {
+                alert("No response from server. Please check your network.");
             } else {
-                navigate("/home");
+                alert("Unexpected error occurred during login.");
             }
         }
-    } catch (error) {
-        if (error.response) {
-            const status = error.response.status;
-            const message = error.response.data?.error || "Unknown error";
 
-            // Match backend messages
-            if (status === 404 && message === "User does not exist!") {
-                setEmailAlert(true);
-            } else if (status === 401 && message === "Incorrect password!") {
-                setPassAlert(true);
-            } else {
-                alert(`Login failed: ${message}`);
-            }
-        } else if (error.request) {
-            alert("No response from server. Please check your network.");
-        } else {
-            alert("Unexpected error occurred during login.");
-        }
-    }
-
-    setLoading(false);
-};
-
-
-
+        setLoading(false);
+    };
 
 
     // Handle Google login
     const handleGoogleLogin = async () => {
-        setGoogleAlert(false)  // Reset alert
+        setGoogleAlert(false); // Reset alert
         try {
-            const result = await signInWithPopup(auth, provider) // Google sign-in popup
+            const result = await signInWithPopup(auth, provider); // Google sign-in popup
             const user = result.user;
             const email = user.email;
-            const response = await axios.post(`${backendAPI}/google-login`, { email })
-            const data = response.data
+
+            const response = await axios.post(`${backendAPI}/google-login`, { email });
+            const data = response.data;
+
             if (!data.success) {
-                setGoogleAlert(true) // Show alert if email not found
-            }
-            else {
-                setGoogleAlert(false)
+                setGoogleAlert(true); // Show alert if email not found
+            } else {
+                setGoogleAlert(false);
                 localStorage.setItem("accessToken", data.accessToken);
-                navigate("/home")  // Navigate to home on success
+
+                const decoded = jwtDecode(data.accessToken);
+                if (decoded.role === "admin") {
+                    navigate("/admin");
+                } else {
+                    navigate("/home");
+                }
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                setGoogleAlert(true);
+            } else {
+                console.error("Google Login Failed:", error);
+                alert("Google login failed. Please try again.");
             }
         }
-        catch (error) {
-            console.error("Google Login Failed:", error);
-            alert("Google login failed. Please try again.");
-        }
-    }
+    };
 
     const isValid = !email || !password || emailAlert || passAlert;
     // Component render
@@ -188,17 +194,17 @@ export default function Login() {
                                 setPassAlert(false) //reset alert msg
                             }}
                             className="inputStyle text-white bg-transparent outline-none border-b-2 border-orange-300"
-                            type={showPassword?"text":"password"}
+                            type={showPassword ? "text" : "password"}
                             id="password"
                             required
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        <button onClick={()=>setShowPassword(!showPassword)} className="absolute right-2"><i className={`fa-solid fa-${showPassword?"eye":"eye-slash"} text-orange-300`}/></button>
+                        <button onClick={() => setShowPassword(!showPassword)} className="absolute right-2"><i className={`fa-solid fa-${showPassword ? "eye" : "eye-slash"} text-orange-300`} /></button>
                         {/* Password error alert */}
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
-                    <div className={`${isValid? "bg-pink-900":"bg-gray-800"}  w-fit text-white font-medium px-5 py-2 rounded-lg`}>
+                    <div className={`${isValid ? "bg-pink-900" : "bg-gray-800"}  w-fit text-white font-medium px-5 py-2 rounded-lg`}>
                         <button onClick={handleLogin} disabled={loading || isValid}>
                             {loading ? <p>Login <i className="fa-solid fa-spinner fa-spin-pulse"></i></p> : "Login"}
                         </button>
