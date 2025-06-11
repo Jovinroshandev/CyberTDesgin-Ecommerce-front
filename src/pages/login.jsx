@@ -140,6 +140,8 @@ export default function Login() {
             alert("Google login failed. Please try again.");
         }
     }
+
+    const isValid = !email || !password || emailAlert || passAlert;
     // Component render
     return (
         <LoginLayout>
@@ -192,13 +194,13 @@ export default function Login() {
                             placeholder=""
                         />
                         <label htmlFor="password" className="labelStyle text-orange-300">Password</label>
-                        <button onClick={()=>setShowPassword(!showPassword)} className="absolute right-2"><i class={`fa-solid fa-${showPassword?"eye":"eye-slash"} text-orange-300`}/></button>
+                        <button onClick={()=>setShowPassword(!showPassword)} className="absolute right-2"><i className={`fa-solid fa-${showPassword?"eye":"eye-slash"} text-orange-300`}/></button>
                         {/* Password error alert */}
                         {passAlert && <p className="text-xs text-red-500">Incorrect password. Please try again!</p>}
                     </div>
-                    <div className="bg-gray-800 w-fit text-white font-medium px-5 py-2 rounded-lg">
-                        <button onClick={handleLogin} disabled={loading}>
-                            {loading ? "Logging in..." : "Login"}
+                    <div className={`${isValid? "bg-pink-900":"bg-gray-800"}  w-fit text-white font-medium px-5 py-2 rounded-lg`}>
+                        <button onClick={handleLogin} disabled={loading || isValid}>
+                            {loading ? <p>Login <i className="fa-solid fa-spinner fa-spin-pulse"></i></p> : "Login"}
                         </button>
 
                     </div>
